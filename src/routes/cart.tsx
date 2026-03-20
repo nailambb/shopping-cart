@@ -1,16 +1,25 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Minus, Plus, Trash2 } from "lucide-react";
+import { useStore } from "@tanstack/react-store";
+import {
+  cartStore,
+  removeFromCart,
+  updateQuantity,
+  clearCart,
+} from "@/store/cart-store";
 
 export const Route = createFileRoute("/cart")({
   component: CartPage,
 });
 
 function CartPage() {
-  const { items, removeFromCart, updateQuantity, clearCart, totalPrice } =
-    useCart();
+  const items = useStore(cartStore, (state) => state.items);
+  const totalPrice = items.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0,
+  );
 
   if (items.length === 0) {
     return (
